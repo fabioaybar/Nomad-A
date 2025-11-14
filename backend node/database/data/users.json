@@ -1,0 +1,63 @@
+[
+  {
+    "id": 1,
+    "name": "Admin User",
+    "email": "admin@rentacar.com",
+    "password": "admin123",
+    "role": "admin",
+    "phone": "+56912345678",
+    "is_active": true,
+    "created_at": "2025-10-14T13:22:50.434Z",
+    "updated_at": "2025-10-17T19:28:18.701Z",
+    "last_login": "2025-10-17T19:28:18.701Z"
+  },
+  {
+    "id": 2,
+    "name": "Juan Pérez Updated",
+    "email": "juan@example.com",
+    "password": "user123",
+    "role": "user",
+    "phone": "+56987654321",
+    "address": "Av. Providencia 1234",
+    "city": "Santiago",
+    "country": "Chile",
+    "is_active": true,
+    "created_at": "2025-10-14T13:22:50.696Z",
+    "updated_at": "2025-10-16T19:25:09.220Z",
+    "last_login": "2025-10-16T19:25:09.219Z"
+  },
+  {
+    "id": 3,
+    "name": "María González",
+    "email": "maria@example.com",
+    "password": "user123",
+    "role": "user",
+    "phone": "+56911111111",
+    "is_active": true,
+    "created_at": "2025-10-14T13:22:50.697Z",
+    "updated_at": "2025-10-14T13:22:50.697Z"
+  },
+  {
+    "id": 4,
+    "name": "Carlos Silva",
+    "email": "carlos@autorent.com",
+    "password": "vendor123",
+    "role": "vendor",
+    "phone": "+56922222222",
+    "is_active": true,
+    "created_at": "2025-10-14T13:22:50.962Z",
+    "updated_at": "2025-10-17T15:39:16.499Z",
+    "last_login": "2025-10-17T15:39:16.498Z"
+  },
+  {
+    "id": 5,
+    "name": "Ana Rodríguez",
+    "email": "ana@carrental.com",
+    "password": "vendor123",
+    "role": "vendor",
+    "phone": "+56933333333",
+    "is_active": true,
+    "created_at": "2025-10-14T13:22:50.963Z",
+    "updated_at": "2025-10-14T13:22:50.964Z"
+  }
+]

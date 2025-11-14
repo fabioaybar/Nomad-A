@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "conversation_id": 1,
+    "sender_id": 4,
+    "sender_type": "participant",
+    "text": "¡Hola! ¿Podemos coordinar la recogida para las 10AM?",
+    "timestamp": "2025-10-14T13:20:00.000Z",
+    "created_at": "2025-10-14T13:20:00.000Z"
+  },
+  {
+    "id": 2,
+    "conversation_id": 1,
+    "sender_id": 2,
+    "sender_type": "user",
+    "text": "¡Hola! Sí, las 10AM está perfecto para mí.",
+    "timestamp": "2025-10-14T13:21:00.000Z",
+    "created_at": "2025-10-14T13:21:00.000Z"
+  },
+  {
+    "id": 3,
+    "conversation_id": 1,
+    "sender_id": 4,
+    "sender_type": "participant",
+    "text": "¡Perfecto! Te veo a las 10AM.",
+    "timestamp": "2025-10-14T13:22:00.000Z",
+    "created_at": "2025-10-14T13:22:00.000Z"
+  },
+  {
+    "id": 4,
+    "conversation_id": 2,
+    "sender_id": 5,
+    "sender_type": "participant",
+    "text": "Hola, el vehículo BMW 3 Series está listo para recogida.",
+    "timestamp": "2025-10-14T13:15:00.000Z",
+    "created_at": "2025-10-14T13:15:00.000Z"
+  },
+  {
+    "id": 5,
+    "conversation_id": 2,
+    "sender_id": 3,
+    "sender_type": "user",
+    "text": "Excelente, ¿dónde puedo recogerlo?",
+    "timestamp": "2025-10-14T13:16:00.000Z",
+    "created_at": "2025-10-14T13:16:00.000Z"
+  },
+  {
+    "id": 6,
+    "conversation_id": 2,
+    "sender_id": 5,
+    "sender_type": "participant",
+    "text": "El vehículo está listo para recogida.",
+    "timestamp": "2025-10-14T13:17:00.000Z",
+    "created_at": "2025-10-14T13:17:00.000Z"
+  }
+]

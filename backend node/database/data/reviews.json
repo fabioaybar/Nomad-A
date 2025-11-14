@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "booking_id": 1,
+    "user_id": 2,
+    "vehicle_id": 1,
+    "vendor_id": 1,
+    "rating": 5,
+    "title": "Excellent service",
+    "comment": "The car was in perfect condition and the service was outstanding. Highly recommended!",
+    "is_anonymous": false,
+    "is_approved": true,
+    "created_at": "2025-10-14T13:22:50.980Z",
+    "updated_at": "2025-10-14T13:22:50.980Z"
+  },
+  {
+    "id": 2,
+    "booking_id": 2,
+    "user_id": 3,
+    "vehicle_id": 4,
+    "vendor_id": 2,
+    "rating": 5,
+    "title": "Amazing experience",
+    "comment": "The Mustang was incredible! Perfect for our weekend trip. Will definitely rent again.",
+    "is_anonymous": false,
+    "is_approved": true,
+    "created_at": "2025-10-14T13:22:50.982Z",
+    "updated_at": "2025-10-14T13:22:50.982Z"
+  },
+  {
+    "id": 3,
+    "booking_id": 3,
+    "user_id": 7,
+    "vehicle_id": 5,
+    "vendor_id": 3,
+    "rating": 5,
+    "title": "Excellent service",
+    "comment": "The car was in perfect condition and the service was outstanding. Highly recommended!",
+    "is_anonymous": false,
+    "is_approved": true,
+    "created_at": "2025-10-14T14:07:34.498Z",
+    "updated_at": "2025-10-14T14:07:34.498Z"
+  },
+  {
+    "id": 4,
+    "booking_id": 4,
+    "user_id": 8,
+    "vehicle_id": 8,
+    "vendor_id": 4,
+    "rating": 5,
+    "title": "Amazing experience",
+    "comment": "The Mustang was incredible! Perfect for our weekend trip. Will definitely rent again.",
+    "is_anonymous": false,
+    "is_approved": true,
+    "created_at": "2025-10-14T14:07:34.499Z",
+    "updated_at": "2025-10-14T14:07:34.499Z"
+  }
+]

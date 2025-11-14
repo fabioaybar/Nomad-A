@@ -1,0 +1,539 @@
+CREATE DATABASE IF NOT EXISTS `nomada` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `nomada`;
+
+SET NAMES utf8mb4;
+
+-- ===========================
+--  ROLES
+-- ===========================
+CREATE TABLE IF NOT EXISTS roles (
+    id_rol INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_rol VARCHAR(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO roles (id_rol, nombre_rol) 
+VALUES 
+    (1, 'Administrador'), 
+    (2, 'Vendedor'), 
+    (3, 'Cliente') AS new
+ON DUPLICATE KEY UPDATE nombre_rol = new.nombre_rol;
+
+
+-- ===========================
+-- 1. USUARIOS
+-- ===========================
+CREATE TABLE IF NOT EXISTS usuarios (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    telefono VARCHAR(20),
+    direccion VARCHAR(150),
+    ciudad VARCHAR(100),
+    pais VARCHAR(100),
+    puntos INT DEFAULT 0,
+    id_rol INT,
+    nivel ENUM('bronce','plata','oro') DEFAULT 'bronce',
+    is_active BOOLEAN DEFAULT TRUE,
+    last_login TIMESTAMP NULL,
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_rol) REFERENCES roles(id_rol)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+INSERT INTO usuarios (id_usuario, nombre, email, password, telefono, direccion, ciudad, pais, is_active, last_login, fecha_registro, id_rol, nivel) VALUES
+(1, 'Admin User', 'admin@rentacar.com', 'admin123', '+56912345678', NULL, NULL, NULL, TRUE, '2025-10-17 19:28:18', '2025-10-14 13:22:50', 1, 'oro'),
+(2, 'Juan Pérez Updated', 'juan@example.com', 'user123', '+56987654321', 'Av. Providencia 1234', 'Santiago', 'Chile', TRUE, '2025-10-28 00:56:21', '2025-10-14 13:22:50', 3, 'plata'),
+(3, 'María González', 'maria@example.com', 'user123', '+56911111111', NULL, NULL, NULL, TRUE, '2025-10-14 13:22:50', '2025-10-14 13:22:50', 3, 'plata'),
+(4, 'Carlos Silva', 'carlos@autorent.com', 'vendor123', '+56922222222', NULL, NULL, NULL, TRUE, '2025-10-17 15:39:16', '2025-10-14 13:22:50', 2, 'oro'),
+(5, 'Ana Rodríguez', 'ana@carrental.com', 'vendor123', '+56933333333', NULL, NULL, NULL, TRUE, '2025-10-14 13:22:50', '2025-10-14 13:22:50', 2, 'oro') 
+ON DUPLICATE KEY UPDATE
+    nombre = VALUES(nombre),
+    password = VALUES(password),
+    telefono = VALUES(telefono),
+    direccion = VALUES(direccion),
+    ciudad = VALUES(ciudad),
+    pais = VALUES(pais),
+    is_active = VALUES(is_active),
+    last_login = VALUES(last_login),
+    fecha_registro = VALUES(fecha_registro),
+    id_rol = VALUES(id_rol),
+    nivel = VALUES(nivel);
+
+-- ===========================
+-- 2. HISTORIAL_USUARIOS
+-- ===========================
+CREATE TABLE IF NOT EXISTS historial_usuarios (
+    id_historial_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    accion VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ===========================
+-- 3. VENDEDORES
+-- ===========================
+CREATE TABLE IF NOT EXISTS vendedores (
+    id_vendedor INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    empresa VARCHAR(150) NOT NULL,
+    tipo_empresa VARCHAR(100) NULL,
+    email VARCHAR(100) NOT NULL,
+    telefono VARCHAR(20),
+    direccion VARCHAR(150),
+    ciudad VARCHAR(100),
+    sitio_web VARCHAR(150) NULL,
+    total_autos INT DEFAULT 0,
+    total_reservas INT DEFAULT 0,
+    pais VARCHAR(100),
+    rating DECIMAL(3,2) DEFAULT 0.0,
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+    UNIQUE KEY uq_vendedores_email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO vendedores (id_vendedor, id_usuario, empresa, tipo_empresa, email, telefono, direccion, ciudad, pais, fecha_registro)
+VALUES
+(1, 4, 'AutoRent Ltda.', 'company', 'carlos@autorent.com', '+56922222222', 'Av. Providencia 1234', 'Santiago', 'Chile', '2025-10-14 13:22:50'),
+(2, 5, 'CarRental S.A.', 'individual', 'ana@carrental.com', '+56933333333', 'Las Condes 567', 'Santiago', 'Chile', '2025-10-14 13:22:50')
+ON DUPLICATE KEY UPDATE
+    empresa = VALUES(empresa),
+    telefono = VALUES(telefono),
+    direccion = VALUES(direccion),
+    ciudad = VALUES(ciudad),
+    pais = VALUES(pais),
+    fecha_registro = VALUES(fecha_registro);
+
+-- ===========================
+-- 4. MODELOS
+-- ===========================
+CREATE TABLE IF NOT EXISTS modelos (
+    id_modelo INT AUTO_INCREMENT PRIMARY KEY,
+    marca VARCHAR(100) NOT NULL,
+    modelo VARCHAR(100) NOT NULL,
+    tipo VARCHAR(50),
+    anio INT,
+    combustible VARCHAR(50),
+    pasajeros INT,
+    maletero INT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO modelos (id_modelo, marca, modelo, tipo, anio, combustible, pasajeros, maletero)
+VALUES
+(1, 'Toyota', 'Corolla', 'Sedan', 2023, 'Gasolina', 5, 450),
+(2, 'Hyundai', 'Tucson', 'SUV', 2022, 'Gasolina', 5, 550),
+(3, 'Ford', 'Fiesta', 'Hatchback', 2021, 'Gasolina', 5, 300),
+(4, 'Chevrolet', 'Spark', 'Hatchback', 2020, 'Gasolina', 4, 250)
+ON DUPLICATE KEY UPDATE
+    marca = VALUES(marca), 
+    modelo = VALUES(modelo), 
+    tipo = VALUES(tipo), 
+    anio = VALUES(anio),
+    combustible = VALUES(combustible),
+    pasajeros = VALUES(pasajeros),
+    maletero = VALUES(maletero);
+
+-- ===========================
+-- 5. AUTOS
+-- ===========================
+CREATE TABLE IF NOT EXISTS autos (
+    id_auto INT AUTO_INCREMENT PRIMARY KEY,
+    id_vendedor INT NOT NULL,
+    id_modelo INT NOT NULL,
+    patente VARCHAR(20) UNIQUE NOT NULL,
+    color VARCHAR(50),
+    transmision VARCHAR(50) NULL,
+    tipo_motor VARCHAR(50) NULL,
+    caracteristicas JSON NULL,
+    imagenes JSON NULL,
+    descripcion TEXT NULL,
+    kilometraje INT,
+    precio DECIMAL(10,2),
+    estado ENUM('disponible','alquilado','mantenimiento') DEFAULT 'disponible',
+    ubicacion VARCHAR(100),
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_modelo) REFERENCES modelos(id_modelo),
+    FOREIGN KEY (id_vendedor) REFERENCES vendedores(id_vendedor)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO autos (id_auto, id_vendedor, id_modelo, patente, color, transmision, tipo_motor, kilometraje, precio, estado, ubicacion, fecha_registro)
+VALUES
+(1, 1, 1, 'ABC123', 'Blanco', 'Automática', '1.8L Gasolina', 15000, 45000, 'disponible', 'Santiago', '2025-10-14 13:22:50'),
+(2, 1, 2, 'XYZ789', 'Gris', 'Automática', '2.0L Gasolina', 25000, 65000, 'disponible', 'Las Condes', '2025-10-14 13:22:50'),
+(3, 2, 3, 'JKL456', 'Rojo', 'Manual', '1.6L Gasolina', 32000, 35000, 'disponible', 'Providencia', '2025-10-14 13:22:50'),
+(4, 2, 4, 'MNO321', 'Azul', 'Manual', '1.2L Gasolina', 41000, 28000, 'disponible', 'Ñuñoa', '2025-10-14 13:22:50')
+ON DUPLICATE KEY UPDATE
+    id_vendedor = VALUES(id_vendedor), 
+    id_modelo = VALUES(id_modelo), 
+    color = VALUES(color), 
+    transmision = VALUES(transmision), 
+    precio = VALUES(precio), 
+    estado = VALUES(estado), 
+    ubicacion = VALUES(ubicacion);
+
+-- ===========================
+-- 6. RESERVAS (tabla principal)
+-- ===========================
+CREATE TABLE IF NOT EXISTS reservas (
+    id_reserva INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    id_auto INT NOT NULL,
+    id_vendedor INT,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE NOT NULL,
+    lugar_retiro VARCHAR(255),
+    lugar_devolucion VARCHAR(255),
+    hora_retiro TIME,
+    hora_devolucion TIME,
+    tarifa_diaria DECIMAL(10,2),
+    numero_dias INT,
+    costo_total DECIMAL(12,2) NOT NULL,
+    estado ENUM('pendiente','confirmada','cancelada','finalizada') DEFAULT 'pendiente',
+    estado_pago ENUM('pendiente','pagado','fallido') DEFAULT 'pendiente',
+    metodo_pago ENUM('tarjeta_credito','efectivo','transferencia','paypal') DEFAULT 'tarjeta_credito',
+    id_transaccion VARCHAR(100),
+    notas TEXT,
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+    FOREIGN KEY (id_auto) REFERENCES autos(id_auto),
+    FOREIGN KEY (id_vendedor) REFERENCES vendedores(id_vendedor)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO reservas (id_reserva, id_usuario, id_auto, id_vendedor, fecha_inicio, fecha_fin, lugar_retiro, lugar_devolucion, hora_retiro, hora_devolucion, costo_total, tarifa_diaria, numero_dias, estado, estado_pago, metodo_pago, id_transaccion, notas)
+VALUES
+(1, 2, 1, 1, '2024-01-15', '2024-01-17', 'Av. Providencia 1234, Santiago', 'Av. Providencia 1234, Santiago', '10:00', '10:00', 90000, 45000, 2, 'confirmada', 'pagado', 'tarjeta_credito', 'txn_123456789', 'Smooth rental experience'),
+(2, 3, 4, 2, '2024-01-20', '2024-01-25', 'Las Condes 567, Santiago', 'Las Condes 567, Santiago', '14:00', '14:00', 475000, 95000, 5, 'confirmada', 'pagado', 'tarjeta_credito', 'txn_987654321', 'Weekend getaway rental'),
+(5, 2, 1, 1, '2024-02-01', '2024-02-03', 'Santiago Airport', 'Santiago Airport', '10:00', '10:00', 90000, 45000, 2, 'pendiente', 'pendiente', 'tarjeta_credito', NULL, NULL)
+ON DUPLICATE KEY UPDATE
+    id_usuario = VALUES(id_usuario),
+    id_auto = VALUES(id_auto),
+    id_vendedor = VALUES(id_vendedor),
+    fecha_inicio = VALUES(fecha_inicio),
+    fecha_fin = VALUES(fecha_fin),
+    lugar_retiro = VALUES(lugar_retiro),
+    lugar_devolucion = VALUES(lugar_devolucion),
+    hora_retiro = VALUES(hora_retiro),
+    hora_devolucion = VALUES(hora_devolucion),
+    costo_total = VALUES(costo_total),
+    tarifa_diaria = VALUES(tarifa_diaria),
+    numero_dias = VALUES(numero_dias),
+    estado = VALUES(estado),
+    estado_pago = VALUES(estado_pago),
+    metodo_pago = VALUES(metodo_pago),
+    id_transaccion = VALUES(id_transaccion),
+    notas = VALUES(notas);
+
+-- ===========================
+-- 7. HISTORIAL_RESERVAS
+-- ===========================
+CREATE TABLE IF NOT EXISTS historial_reservas (
+    id_historial INT AUTO_INCREMENT PRIMARY KEY,
+    id_reserva INT NOT NULL,
+    id_usuario INT NOT NULL,
+    estado_anterior ENUM('pendiente','confirmada','cancelada','finalizada'),
+    estado_nuevo ENUM('pendiente','confirmada','cancelada','finalizada'),
+    fecha_cambio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_reserva) REFERENCES reservas(id_reserva),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ===========================
+-- 8. FACTURAS
+-- ===========================
+CREATE TABLE IF NOT EXISTS facturas (
+    id_factura INT AUTO_INCREMENT PRIMARY KEY,
+    id_reserva INT UNIQUE NOT NULL,
+    numero_factura VARCHAR(50) UNIQUE NOT NULL,
+    fecha_emision DATE NOT NULL,
+    subtotal DECIMAL(12,2) NOT NULL,
+    descuento DECIMAL(10,2) DEFAULT 0,
+    total DECIMAL(10,2) NOT NULL,
+    estado ENUM('emitida','anulada') DEFAULT 'emitida',
+    FOREIGN KEY (id_reserva) REFERENCES reservas(id_reserva)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ===========================
+-- 9. METODOS DE PAGO
+-- ===========================
+CREATE TABLE IF NOT EXISTS metodos_pago (
+    id_metodo INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_metodo VARCHAR(50) NOT NULL UNIQUE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO metodos_pago (id_metodo, nombre_metodo) VALUES
+(1, 'tarjeta_credito'),
+(2, 'paypal'),
+(3, 'transferencia'),
+(4, 'efectivo')
+ON DUPLICATE KEY UPDATE nombre_metodo = VALUES(nombre_metodo);
+
+-- ===========================
+-- 10. PAGOS
+-- ===========================
+CREATE TABLE IF NOT EXISTS pagos (
+    id_pago INT AUTO_INCREMENT PRIMARY KEY,
+    id_reserva INT NULL,
+    id_factura INT NULL,
+    id_metodo INT NOT NULL,
+    monto DECIMAL(10,2) NOT NULL,
+    fecha_pago DATE NOT NULL,
+    estado ENUM('pendiente','completado','fallido') DEFAULT 'pendiente',
+    id_transaccion VARCHAR(100),
+    FOREIGN KEY (id_reserva) REFERENCES reservas(id_reserva),
+    FOREIGN KEY (id_factura) REFERENCES facturas(id_factura),
+    FOREIGN KEY (id_metodo) REFERENCES metodos_pago(id_metodo)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ===========================
+-- 11. CONVERSACIONES
+-- ===========================
+CREATE TABLE IF NOT EXISTS conversaciones (
+    id_conversacion INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario1 INT NOT NULL,
+    id_participante INT NOT NULL,
+    titulo VARCHAR(150),
+    ayuda_solicitada BOOLEAN DEFAULT FALSE,
+    ultimo_mensaje TEXT,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario1) REFERENCES usuarios(id_usuario),
+    FOREIGN KEY (id_participante) REFERENCES usuarios(id_usuario)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO conversaciones (id_conversacion, id_usuario1, id_participante, titulo, ayuda_solicitada, ultimo_mensaje, fecha_creacion)
+VALUES
+(1, 2, 4, 'Conversación con AutoRent Chile', FALSE, '¡Perfecto! Te veo a las 10AM.', '2025-10-14 13:22:50'),
+(2, 3, 5, 'Conversación con CarRental Express', FALSE, 'El vehículo está listo para recogida.', '2025-10-14 13:22:50')
+ON DUPLICATE KEY UPDATE ultimo_mensaje = VALUES(ultimo_mensaje), fecha_actualizacion = VALUES(fecha_creacion);
+
+-- ===========================
+-- 12. MENSAJES
+-- ===========================
+CREATE TABLE IF NOT EXISTS mensajes (
+    id_mensaje INT AUTO_INCREMENT PRIMARY KEY,
+    id_conversacion INT NOT NULL,
+    id_remitente INT NOT NULL,
+    tipo_remitente ENUM('usuario','participante') DEFAULT 'usuario',
+    mensaje TEXT NOT NULL,
+    marca_tiempo TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    leido BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (id_conversacion) REFERENCES conversaciones(id_conversacion),
+    FOREIGN KEY (id_remitente) REFERENCES usuarios(id_usuario)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO mensajes (id_mensaje, id_conversacion, id_remitente, tipo_remitente, mensaje, marca_tiempo)
+VALUES
+(1, 1, 4, 'participante', '¡Hola! ¿Podemos coordinar la recogida para las 10AM?', '2025-10-14 13:20:00'),
+(2, 1, 2, 'usuario', '¡Hola! Sí, las 10AM está perfecto para mí.', '2025-10-14 13:21:00'),
+(3, 1, 4, 'participante', '¡Perfecto! Te veo a las 10AM.', '2025-10-14 13:22:00')
+ON DUPLICATE KEY UPDATE mensaje = VALUES(mensaje), marca_tiempo = VALUES(marca_tiempo);
+
+-- ===========================
+-- 13. MANTENIMIENTOS
+-- ===========================
+CREATE TABLE IF NOT EXISTS mantenimientos (
+    id_mantenimiento INT AUTO_INCREMENT PRIMARY KEY,
+    id_auto INT NOT NULL,
+    id_vendedor INT,
+    tipo VARCHAR(100),
+    descripcion TEXT NOT NULL,
+    fecha_programada DATE,
+    fecha_completada DATE,
+    estado ENUM('pendiente','programado','completado') DEFAULT 'pendiente',
+    costo DECIMAL(12,2),
+    kilometraje INT,
+    notas TEXT,
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_auto) REFERENCES autos(id_auto),
+    FOREIGN KEY (id_vendedor) REFERENCES vendedores(id_vendedor)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO mantenimientos (id_mantenimiento, id_auto, id_vendedor, tipo, descripcion, fecha_programada, fecha_completada, estado, costo, kilometraje, notas)
+VALUES
+(1, 1, 1, 'cambio_aceite', 'Cambio de aceite y filtro', '2024-01-20', '2024-01-20', 'completado', 25000, 15000, 'Mantenimiento rutinario completado'),
+(2, 2, 1, 'servicio_frenos', 'Servicio de frenos', '2024-02-15', NULL, 'programado', 45000, 25000, 'Revisión de pastillas y discos de freno'),
+(3, 1, 1, 'rotacion_neumaticos', 'Rotación de neumáticos', '2024-02-01', NULL, 'pendiente', 15000, 18000, 'Rotación cada 10,000 km')
+ON DUPLICATE KEY UPDATE descripcion = VALUES(descripcion), estado = VALUES(estado), costo = VALUES(costo);
+
+-- ===========================
+-- 14. REPORTES_MANTENIMIENTO
+-- ===========================
+CREATE TABLE IF NOT EXISTS reportes_mantenimiento (
+    id_reporte_mant INT AUTO_INCREMENT PRIMARY KEY,
+    id_mantenimiento INT NOT NULL,
+    id_vendedor INT,
+    tipo_reporte ENUM('diagnostico','reparacion','seguimiento') DEFAULT 'diagnostico',
+    descripcion TEXT,
+    costo_adicional DECIMAL(10,2) DEFAULT 0.00,
+    fecha_reporte TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_mantenimiento) REFERENCES mantenimientos(id_mantenimiento),
+    FOREIGN KEY (id_vendedor) REFERENCES vendedores(id_vendedor)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ===========================
+-- 15. NOTIFICACIONES
+-- ===========================
+CREATE TABLE IF NOT EXISTS notificaciones (
+    id_notificacion INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    tipo VARCHAR(50),
+    titulo VARCHAR(150),
+    mensaje TEXT NOT NULL,
+    datos JSON,
+    leido BOOLEAN DEFAULT FALSE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO notificaciones (id_notificacion, id_usuario, tipo, titulo, mensaje, datos, leido, fecha_creacion)
+VALUES
+(1, 2, 'reserva', 'Reserva Pendiente', 'Tu reserva #5 está pendiente de confirmación', JSON_OBJECT('booking_id', 5, 'action', 'view_booking'), FALSE, '2025-10-16 20:00:00'),
+(2, 2, 'reserva', 'Reserva Confirmada', 'Tu reserva #1 ha sido completada exitosamente', JSON_OBJECT('booking_id', 1, 'action', 'view_booking'), TRUE, '2025-10-15 10:00:00'),
+(3, 2, 'pago', 'Pago Pendiente', 'El pago de tu reserva #6 está pendiente', JSON_OBJECT('booking_id', 6, 'action', 'view_payment'), FALSE, '2025-10-16 19:00:00'),
+(4, 2, 'promoción', 'Descuento Especial', '¡Obtén 20% de descuento en tu próxima reserva!', JSON_OBJECT('discount_code', 'WELCOME20', 'action', 'use_code'), FALSE, '2025-10-16 18:00:00'),
+(5, 2, 'reserva', 'Reserva Cancelada', 'Tu reserva #7 ha sido cancelada', JSON_OBJECT('booking_id', 7, 'action', 'view_booking'), TRUE, '2025-10-14 15:00:00')
+ON DUPLICATE KEY UPDATE titulo = VALUES(titulo), mensaje = VALUES(mensaje), datos = VALUES(datos), leido = VALUES(leido);
+
+-- ===========================
+-- 16. DESCUENTOS
+-- ===========================
+CREATE TABLE IF NOT EXISTS descuentos (
+    id_descuento INT AUTO_INCREMENT PRIMARY KEY,
+    codigo VARCHAR(50) UNIQUE NOT NULL,
+    descripcion VARCHAR(255),
+    porcentaje DECIMAL(5,2),
+    fecha_inicio DATE,
+    fecha_fin DATE,
+    activo BOOLEAN DEFAULT TRUE,
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO descuentos (codigo, descripcion, porcentaje, fecha_inicio, fecha_fin)
+VALUES
+('WELCOME20', 'Descuento especial de bienvenida', 20.00, '2025-10-16', '2025-12-31'),
+('FIESTAS25', 'Descuento por temporada de fiestas', 25.00, '2025-12-01', '2026-01-15')
+ON DUPLICATE KEY UPDATE descripcion = VALUES(descripcion), porcentaje = VALUES(porcentaje), fecha_inicio = VALUES(fecha_inicio), fecha_fin = VALUES(fecha_fin);
+
+-- ===========================
+-- 17. PROMOCIONES
+-- ===========================
+CREATE TABLE IF NOT EXISTS promociones (
+    id_promocion INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    puntos_requeridos INT NOT NULL,
+    tipo_descuento ENUM('Porcentaje','Monto') NOT NULL,
+    valor_descuento DECIMAL(10,2) NOT NULL,
+    nivel_minimo ENUM('bronce','plata','oro') DEFAULT 'bronce'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ===========================
+-- 18. USUARIOS_PROMOCIONES
+-- ===========================
+CREATE TABLE IF NOT EXISTS usuarios_promociones (
+    id_usuario INT NOT NULL,
+    id_promocion INT NOT NULL,
+    fecha_aplicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_usuario, id_promocion),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+    FOREIGN KEY (id_promocion) REFERENCES promociones(id_promocion)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ===========================
+-- 19. RECOMPENSAS (fidelización)
+-- ===========================
+CREATE TABLE IF NOT EXISTS recompensas (
+    id_recompensa INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    descripcion TEXT,
+    puntos_necesarios INT NOT NULL,
+    beneficio TEXT,
+    activo BOOLEAN DEFAULT TRUE,
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+INSERT IGNORE INTO recompensas (id_recompensa, nombre, descripcion, puntos_necesarios, beneficio, activo)
+VALUES
+(1, 'Descuento bienvenida', '20% de descuento en la primera reserva', 100, '20% off', TRUE);
+
+-- ===========================
+-- 20. USUARIOS_RECOMPENSAS
+-- ===========================
+CREATE TABLE IF NOT EXISTS usuarios_recompensas (
+    id_usuario INT NOT NULL,
+    id_recompensa INT NOT NULL,
+    fecha_reclamo TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_usuario, id_recompensa),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+    FOREIGN KEY (id_recompensa) REFERENCES recompensas(id_recompensa)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ===========================
+-- 21. HISTORIAL_PUNTOS
+-- ===========================
+CREATE TABLE IF NOT EXISTS historial_puntos (
+    id_historial_puntos INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    puntos INT NOT NULL,
+    tipo_movimiento ENUM('ganado','gastado','ajuste') DEFAULT 'ganado',
+    descripcion TEXT,
+    fecha_movimiento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ===========================
+-- 22. RESEÑAS
+-- ===========================
+CREATE TABLE IF NOT EXISTS resenas (
+    id_resena INT AUTO_INCREMENT PRIMARY KEY,
+    id_reserva INT,
+    id_cliente INT NOT NULL,
+    id_auto INT NOT NULL,
+    id_vendedor INT,
+    calificacion INT NOT NULL,
+    titulo VARCHAR(150),
+    comentario TEXT,
+    es_anonima BOOLEAN DEFAULT FALSE,
+    aprobada BOOLEAN DEFAULT TRUE,
+    fecha_reseña TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_reserva) REFERENCES reservas(id_reserva),
+    FOREIGN KEY (id_cliente) REFERENCES usuarios(id_usuario),
+    FOREIGN KEY (id_auto) REFERENCES autos(id_auto),
+    FOREIGN KEY (id_vendedor) REFERENCES vendedores(id_vendedor)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO resenas (id_resena, id_reserva, id_cliente, id_auto, id_vendedor, calificacion, titulo, comentario)
+VALUES
+(1, 1, 2, 1, 1, 5, 'Excelente servicio', 'El auto estaba en perfectas condiciones y el servicio fue sobresaliente.'),
+(2, 2, 3, 4, 2, 5, 'Experiencia increíble', 'El Mustang fue increíble. Perfecto para nuestro viaje de fin de semana.')
+ON DUPLICATE KEY UPDATE calificacion = VALUES(calificacion), titulo = VALUES(titulo), comentario = VALUES(comentario);
+
+-- ===========================
+-- 23. REPORTES
+-- ===========================
+CREATE TABLE IF NOT EXISTS reportes (
+    id_reporte INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    tipo_reporte ENUM('reserva','pago','cliente','auto','mantenimiento','otro') NOT NULL,
+    descripcion TEXT,
+    datos JSON,
+    fecha_generacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ===========================
+-- 24. RANKING VEHICULOS
+-- ===========================
+CREATE TABLE IF NOT EXISTS ranking_vehiculos (
+    id_auto INT PRIMARY KEY,
+    veces_reservado INT DEFAULT 0,
+    promedio_calificacion DECIMAL(3,2) DEFAULT 0.00,
+    ultima_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_auto) REFERENCES autos(id_auto)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+
+

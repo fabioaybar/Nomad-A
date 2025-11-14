@@ -1,0 +1,73 @@
+{
+  "roles": [
+    { "id_rol": 1, "nombre_rol": "Administrador" },
+    { "id_rol": 2, "nombre_rol": "Vendedor" },
+    { "id_rol": 3, "nombre_rol": "Cliente" }
+  ],
+  "usuarios": [
+    { "id_usuario": 1, "nombre": "Admin User", "email": "admin@rentacar.com", "password": "admin123", "telefono": "+56912345678", "puntos": 0, "id_rol": 1, "nivel": "oro", "is_active": true },
+    { "id_usuario": 2, "nombre": "Juan Pérez Updated", "email": "juan@example.com", "password": "user123", "telefono": "+56987654321", "direccion": "Av. Providencia 1234", "ciudad": "Santiago", "pais": "Chile", "id_rol": 3, "nivel": "plata", "is_active": true },
+    { "id_usuario": 3, "nombre": "María González", "email": "maria@example.com", "password": "user123", "telefono": "+56911111111", "id_rol": 3, "nivel": "plata", "is_active": true },
+    { "id_usuario": 4, "nombre": "Carlos Silva", "email": "carlos@autorent.com", "password": "vendor123", "telefono": "+56922222222", "id_rol": 2, "nivel": "oro", "is_active": true },
+    { "id_usuario": 5, "nombre": "Ana Rodríguez", "email": "ana@carrental.com", "password": "vendor123", "telefono": "+56933333333", "id_rol": 2, "nivel": "oro", "is_active": true }
+  ],
+  "vendedores": [
+    { "id_vendedor": 1, "id_usuario": 4, "empresa": "AutoRent Ltda.", "tipo_empresa": "company", "email": "carlos@autorent.com", "telefono": "+56922222222", "direccion": "Av. Providencia 1234", "ciudad": "Santiago", "pais": "Chile" },
+    { "id_vendedor": 2, "id_usuario": 5, "empresa": "CarRental S.A.", "tipo_empresa": "individual", "email": "ana@carrental.com", "telefono": "+56933333333", "direccion": "Las Condes 567", "ciudad": "Santiago", "pais": "Chile" }
+  ],
+  "modelos": [
+    { "id_modelo": 1, "marca": "Toyota", "modelo": "Corolla", "tipo": "Sedan", "anio": 2023, "combustible": "Gasolina", "pasajeros": 5, "maletero": 450 },
+    { "id_modelo": 2, "marca": "Hyundai", "modelo": "Tucson", "tipo": "SUV", "anio": 2022, "combustible": "Gasolina", "pasajeros": 5, "maletero": 550 },
+    { "id_modelo": 3, "marca": "Ford", "modelo": "Fiesta", "tipo": "Hatchback", "anio": 2021, "combustible": "Gasolina", "pasajeros": 5, "maletero": 300 },
+    { "id_modelo": 4, "marca": "Chevrolet", "modelo": "Spark", "tipo": "Hatchback", "anio": 2020, "combustible": "Gasolina", "pasajeros": 4, "maletero": 250 }
+  ],
+  "autos": [
+    { "id_auto": 1, "id_vendedor": 1, "id_modelo": 1, "patente": "ABC123", "color": "Blanco", "transmision": "Automática", "tipo_motor": "1.8L Gasolina", "kilometraje": 15000, "precio": 45000, "estado": "disponible", "ubicacion": "Santiago" },
+    { "id_auto": 2, "id_vendedor": 1, "id_modelo": 2, "patente": "XYZ789", "color": "Gris", "transmision": "Automática", "tipo_motor": "2.0L Gasolina", "kilometraje": 25000, "precio": 65000, "estado": "disponible", "ubicacion": "Las Condes" },
+    { "id_auto": 3, "id_vendedor": 2, "id_modelo": 3, "patente": "JKL456", "color": "Rojo", "transmision": "Manual", "tipo_motor": "1.6L Gasolina", "kilometraje": 32000, "precio": 35000, "estado": "disponible", "ubicacion": "Providencia" },
+    { "id_auto": 4, "id_vendedor": 2, "id_modelo": 4, "patente": "MNO321", "color": "Azul", "transmision": "Manual", "tipo_motor": "1.2L Gasolina", "kilometraje": 41000, "precio": 28000, "estado": "disponible", "ubicacion": "Ñuñoa" }
+  ],
+  "reservas": [
+    { "id_reserva": 1, "id_usuario": 2, "id_auto": 1, "id_vendedor": 1, "fecha_inicio": "2024-01-15", "fecha_fin": "2024-01-17", "lugar_retiro": "Av. Providencia 1234, Santiago", "lugar_devolucion": "Av. Providencia 1234, Santiago", "hora_retiro": "10:00", "hora_devolucion": "10:00", "costo_total": 90000, "tarifa_diaria": 45000, "numero_dias": 2, "estado": "confirmada", "estado_pago": "pagado", "metodo_pago": "tarjeta_credito", "id_transaccion": "txn_123456789", "notas": "Smooth rental experience" },
+    { "id_reserva": 2, "id_usuario": 3, "id_auto": 4, "id_vendedor": 2, "fecha_inicio": "2024-01-20", "fecha_fin": "2024-01-25", "lugar_retiro": "Las Condes 567, Santiago", "lugar_devolucion": "Las Condes 567, Santiago", "hora_retiro": "14:00", "hora_devolucion": "14:00", "costo_total": 475000, "tarifa_diaria": 95000, "numero_dias": 5, "estado": "confirmada", "estado_pago": "pagado", "metodo_pago": "tarjeta_credito", "id_transaccion": "txn_987654321", "notas": "Weekend getaway rental" },
+    { "id_reserva": 5, "id_usuario": 2, "id_auto": 1, "id_vendedor": 1, "fecha_inicio": "2024-02-01", "fecha_fin": "2024-02-03", "lugar_retiro": "Santiago Airport", "lugar_devolucion": "Santiago Airport", "hora_retiro": "10:00", "hora_devolucion": "10:00", "costo_total": 90000, "tarifa_diaria": 45000, "numero_dias": 2, "estado": "pendiente", "estado_pago": "pendiente", "metodo_pago": "tarjeta_credito" }
+  ],
+  "conversaciones": [
+    { "id_conversacion": 1, "id_usuario1": 2, "id_participante": 4, "titulo": "Conversación con AutoRent Chile", "ayuda_solicitada": false, "ultimo_mensaje": "¡Perfecto! Te veo a las 10AM." },
+    { "id_conversacion": 2, "id_usuario1": 3, "id_participante": 5, "titulo": "Conversación con CarRental Express", "ayuda_solicitada": false, "ultimo_mensaje": "El vehículo está listo para recogida." }
+  ],
+  "mensajes": [
+    { "id_mensaje": 1, "id_conversacion": 1, "id_remitente": 4, "tipo_remitente": "participante", "mensaje": "¡Hola! ¿Podemos coordinar la recogida para las 10AM?", "marca_tiempo": "2025-10-14T13:20:00Z" },
+    { "id_mensaje": 2, "id_conversacion": 1, "id_remitente": 2, "tipo_remitente": "usuario", "mensaje": "¡Hola! Sí, las 10AM está perfecto para mí.", "marca_tiempo": "2025-10-14T13:21:00Z" },
+    { "id_mensaje": 3, "id_conversacion": 1, "id_remitente": 4, "tipo_remitente": "participante", "mensaje": "¡Perfecto! Te veo a las 10AM.", "marca_tiempo": "2025-10-14T13:22:00Z" }
+  ],
+  "mantenimientos": [
+    { "id_mantenimiento": 1, "id_auto": 1, "id_vendedor": 1, "tipo": "cambio_aceite", "descripcion": "Cambio de aceite y filtro", "fecha_programada": "2024-01-20", "fecha_completada": "2024-01-20", "estado": "completado", "costo": 25000, "kilometraje": 15000 },
+    { "id_mantenimiento": 2, "id_auto": 2, "id_vendedor": 1, "tipo": "servicio_frenos", "descripcion": "Servicio de frenos", "fecha_programada": "2024-02-15", "estado": "programado", "costo": 45000, "kilometraje": 25000 },
+    { "id_mantenimiento": 3, "id_auto": 1, "id_vendedor": 1, "tipo": "rotacion_neumaticos", "descripcion": "Rotación de neumáticos", "fecha_programada": "2024-02-01", "estado": "pendiente", "costo": 15000, "kilometraje": 18000 }
+  ],
+  "notificaciones": [
+    { "id_notificacion": 1, "id_usuario": 2, "tipo": "reserva", "titulo": "Reserva Pendiente", "mensaje": "Tu reserva #5 está pendiente de confirmación", "datos": { "booking_id": 5, "action": "view_booking" }, "leido": false },
+    { "id_notificacion": 2, "id_usuario": 2, "tipo": "reserva", "titulo": "Reserva Confirmada", "mensaje": "Tu reserva #1 ha sido completada exitosamente", "datos": { "booking_id": 1, "action": "view_booking" }, "leido": true },
+    { "id_notificacion": 3, "id_usuario": 2, "tipo": "pago", "titulo": "Pago Pendiente", "mensaje": "El pago de tu reserva #6 está pendiente", "datos": { "booking_id": 6, "action": "view_payment" }, "leido": false },
+    { "id_notificacion": 4, "id_usuario": 2, "tipo": "promoción", "titulo": "Descuento Especial", "mensaje": "¡Obtén 20% de descuento en tu próxima reserva!", "datos": { "discount_code": "WELCOME20", "action": "use_code" }, "leido": false },
+    { "id_notificacion": 5, "id_usuario": 2, "tipo": "reserva", "titulo": "Reserva Cancelada", "mensaje": "Tu reserva #7 ha sido cancelada", "datos": { "booking_id": 7, "action": "view_booking" }, "leido": true }
+  ],
+  "descuentos": [
+    { "id_descuento": 1, "codigo": "WELCOME20", "descripcion": "Descuento especial de bienvenida", "porcentaje": 20.0, "fecha_inicio": "2025-10-16", "fecha_fin": "2025-12-31", "activo": true },
+    { "id_descuento": 2, "codigo": "FIESTAS25", "descripcion": "Descuento por temporada de fiestas", "porcentaje": 25.0, "fecha_inicio": "2025-12-01", "fecha_fin": "2026-01-15", "activo": true }
+  ],
+  "metodos_pago": [
+    { "id_metodo": 1, "nombre_metodo": "tarjeta_credito" },
+    { "id_metodo": 2, "nombre_metodo": "paypal" },
+    { "id_metodo": 3, "nombre_metodo": "transferencia" },
+    { "id_metodo": 4, "nombre_metodo": "efectivo" }
+  ],
+  "recompensas": [
+    { "id_recompensa": 1, "nombre": "Descuento bienvenida", "descripcion": "20% de descuento en la primera reserva", "puntos_necesarios": 100, "beneficio": "20% off", "activo": true }
+  ],
+  "resenas": [
+    { "id_resena": 1, "id_reserva": 1, "id_cliente": 2, "id_auto": 1, "id_vendedor": 1, "calificacion": 5, "titulo": "Excelente servicio", "comentario": "El auto estaba en perfectas condiciones y el servicio fue sobresaliente." },
+    { "id_resena": 2, "id_reserva": 2, "id_cliente": 3, "id_auto": 4, "id_vendedor": 2, "calificacion": 5, "titulo": "Experiencia increíble", "comentario": "El Mustang fue increíble. Perfecto para nuestro viaje de fin de semana." }
+  ]
+}
