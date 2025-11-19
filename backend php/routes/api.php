@@ -122,3 +122,10 @@ Route::get('/autos', function () {
     $autos = DB::table('autos')->limit(50)->get();
     return response()->json($autos);
 });
+
+// routes/api.php
+
+// (Mantén los "use" que ya tenía el archivo, pero quita el 'use App\Http\Controllers\AuthController;')
+
+// AÑADE SÓLO ESTA LÍNEA DE RUTA:
+Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
