@@ -6,56 +6,66 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\Support\Facades\DB; // <-- NECESARIO para consultar la tabla 'roles'
+use Illuminate\Support\Facades\DB; 
+use Illuminate\Validation\ValidationException; // Para manejar errores de validación de forma limpia
 
 class AuthController extends Controller
 {
     /**
      * Maneja el registro de nuevos usuarios (Cliente o Vendedor).
+     *
+     * Espera campos: 'name', 'email', 'password', 'password_confirmation', 'role', 'phone'.
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function register(Request $request)
     {
-        // 1. VALIDACIÓN
-        // IMPORTANTE: Estos nombres deben coincidir con los campos que tu frontend de Vue envía
-        $request->validate([
-            'nombre' => ['required', 'string', 'max:100'], 
-            'email' => ['required', 'string', 'email', 'max:100', 'unique:usuarios,email'], 
-            'password' => ['required', 'confirmed', Password::defaults()],
-            'rol_seleccionado' => ['required', 'string', 'in:vendedor,cliente'], // Espera las cadenas 'vendedor' o 'cliente'
-        ]);
+        try {
+            // 1. VALIDACIÓN: Usamos los nombres de campos que Vue está enviando
+            $request->validate([
+                'name' => ['required', 'string', 'max:100'], // Campo 'name' del frontend
+                'email' => ['required', 'string', 'email', 'max:100', 'unique:usuarios,email'], 
+                'password' => ['required', 'confirmed', Password::defaults()],
+                'role' => ['required', 'string', 'in:vendor,user'], // Espera las cadenas 'vendor' o 'user' de Vue
+                'phone' => ['nullable', 'string', 'max:20'], // Campo 'phone' del frontend (Opcional)
+            ]);
+        } catch (ValidationException $e) {
+            // Si la validación falla, devuelve los errores al frontend
+            return response()->json([
+                'message' => 'Los datos proporcionados no son válidos.',
+                'errors' => $e->errors()
+            ], 422);
+        }
 
         // 2. OBTENER ID_ROL
-        // Convertimos la cadena de rol (vendedor/cliente) al ID numérico (2/3)
-        $roleName = ($request->rol_seleccionado === 'vendedor') ? 'Vendedor' : 'Cliente';
+        // Traducimos el rol de Vue ('vendor' o 'user') al nombre de la BD ('Vendedor' o 'Cliente')
+        $roleName = ($request->role === 'vendor') ? 'Vendedor' : 'Cliente';
         
-        // Buscamos el ID numérico en la tabla 'roles' de tu BD
+        // Buscamos el ID numérico en la tabla 'roles'
         $id_rol = DB::table('roles')
                     ->where('nombre_rol', $roleName)
-                    ->value('id_rol'); // Obtiene el valor de 'id_rol' (2 o 3)
+                    ->value('id_rol'); 
         
-        // Debería ser imposible, pero es una buena práctica validar
+        // El rol debería existir, pero es un buen control
         if (!$id_rol) {
-            return response()->json(['message' => 'Error interno: ID de Rol no encontrado.'], 500);
+            return response()->json(['message' => 'Error interno: Rol de usuario no configurado correctamente en la BD.'], 500);
         }
 
         // 3. CREAR USUARIO
-        // Usamos el modelo User (que apunta a la tabla 'usuarios')
+        // Usamos el modelo User (que apunta a la tabla 'usuarios') y mapeamos los campos de Vue a los de la BD
         $user = User::create([
-            'nombre' => $request->nombre,
+            'nombre' => $request->name,        // Mapea Vue.name a BD.nombre
             'email' => $request->email,
-            'password' => Hash::make($request->password), // Contraseña cifrada
-            'id_rol' => $id_rol, // Asignamos el ID del rol (2 o 3)
-            'is_active' => true, // Por defecto, activo
-            // Si el formulario de registro incluye teléfono, dirección, etc., 
-            // agrégalo aquí usando $request->campo y en el $fillable del modelo User.
+            'password' => Hash::make($request->password), // Cifra la contraseña
+            'id_rol' => $id_rol,               // Asignamos el ID del rol (2 o 3)
+            'telefono' => $request->phone,     // Mapea Vue.phone a BD.telefono
+            'is_active' => true,               // Por defecto, activo
         ]);
 
         // 4. RESPUESTA AL FRONTEND
-        // Si todo sale bien, respondemos con el usuario creado (sin la contraseña cifrada)
         return response()->json([
-            'message' => 'Registro exitoso. Procede a iniciar sesión.', 
+            'success' => true, // Añadimos 'success' para que Vue lo maneje fácilmente (ver handleRegister en Vue)
+            'message' => 'Registro exitoso. Se ha creado tu cuenta.', 
             'user' => [
                 'id_usuario' => $user->id_usuario,
                 'nombre' => $user->nombre,
