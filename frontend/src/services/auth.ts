@@ -33,7 +33,7 @@ export const authApi = {
 
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      const response = await api.post('/auth/login', credentials)
+      const response = await api.post('/api/login', credentials)
       return response.data
     } catch (error: any) {
       return {
@@ -45,7 +45,7 @@ export const authApi = {
 
   async register(data: RegisterData): Promise<AuthResponse> {
     try {
-      const response = await api.post('/auth/register', data)
+      const response = await api.post('/api/register', data)
       return response.data
     } catch (error: any) {
       return {

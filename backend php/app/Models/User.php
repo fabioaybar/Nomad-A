@@ -1,4 +1,4 @@
-// app/Models/User.php
+<?php
 
 namespace App\Models;
 
@@ -11,29 +11,37 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    // --- INICIO DE MODIFICACIONES ---
-
+    // 1. Configuración de Tabla
     protected $table = 'usuarios';
     protected $primaryKey = 'id_usuario';
 
+    // 2. SOLUCIÓN AL ERROR 500: Desactivar timestamps automáticos de Laravel
+    // Esto evita que busque 'created_at' y 'updated_at'
+    public $timestamps = false; 
+
+    // Opcional: Si quieres que Laravel sepa que 'fecha_registro' es tu fecha de creación
+    const CREATED_AT = 'fecha_registro';
+    const UPDATED_AT = null; // No tienes columna de actualización
+
     protected $fillable = [
-        'nombre',       // <-- CAMBIADO: Usar el nombre del campo de tu BD
+        'nombre',       
         'email',
         'password',
-        'id_rol',       // <-- AÑADIDO: Para guardar el rol (FK a roles.id_rol)
-        // Campos opcionales que podríamos rellenar:
-        'telefono', 
+        'id_rol',      
+        'telefono',     
         'direccion', 
         'ciudad', 
         'pais',
         'is_active',
-        // 'role', (Quitado porque en la BD es id_rol)
     ];
-
-    // --- FIN DE MODIFICACIONES ---
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
-// ... el resto del código (incluyendo hasRole, castings, y relaciones)
+    
+    protected $casts = [
+        'is_active' => 'boolean',
+        'email_verified_at' => 'datetime',
+    ];
+}

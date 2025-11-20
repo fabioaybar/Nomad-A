@@ -9,7 +9,7 @@ import axios from 'axios'
  * baseURL vacío para que /api use el proxy de Vite (ver vite.config.ts).
  */
 const api = axios.create({
-  baseURL: '', // -> /api/... será proxied a http://localhost:8000 por Vite
+  baseURL: 'http://127.0.0.1:8000/', // -> /api/... será proxied a http://localhost:8000 por Vite
   timeout: Number(import.meta.env.VITE_API_TIMEOUT) || 30000,
   headers: {
     'Content-Type': 'application/json',
